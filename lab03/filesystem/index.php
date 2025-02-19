@@ -1,5 +1,28 @@
 <?php
-// index.php
+
+    /**
+     * Recursively scan the directory and its subdirectories for
+     * images with the extension .jpg and display them.
+     * 
+     * @param string $dir The directory to be scanned.
+     * 
+     * @return void
+     */
+    function place_img(string $dir): void
+    {
+        $files = scandir($dir);
+        if ($files !== false) {
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'jpg') {
+                    $path = $dir . $file;
+                    echo "<img src='$path' alt='Cat'>";
+                }
+            }
+        } else {
+            echo "<p>No images found.</p>";
+        }
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,19 +57,7 @@
   <!-- Gallery -->
   <div class="gallery">
       <?php
-      $dir = 'image/';
-      $files = scandir($dir);
-
-      if ($files !== false) {
-          foreach ($files as $file) {
-              if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'jpg') {
-                  $path = $dir . $file;
-                  echo "<img src='$path' alt='Cat'>";
-              }
-          }
-      } else {
-          echo "<p>No images found.</p>";
-      }
+        place_img("./image/")
       ?>
   </div>
 

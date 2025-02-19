@@ -3,60 +3,139 @@ declare(strict_types=1);
 include 'transactions.php';
 
 
+/**
+ * Calculates the total amount of all transactions.
+ *
+ * @param array $transactions An array of transactions. Each transaction is an
+ *                            associative array with the keys 'id', 'date',
+ *                            'amount', 'description', and 'merchant'.
+ * @return float The total amount of all transactions.
+ */
 function calculateTotalAmount(array $transactions): float {
+  // Initialize the total amount to zero.
   $amount = 0.0;
+
+  // Iterate over all transactions and add their amounts to the total amount.
   foreach($transactions as $transaction){
-    $amount+=$transaction['amount'];
+    $amount += $transaction['amount'];
   }
+
+  // Return the total amount.
   return $amount;
 }
 
+/**
+ * Finds transactions that contain a specific part in their description.
+ *
+ * This function searches through all transactions and returns those
+ * that contain the specified part in their description, case-insensitively.
+ *
+ * @param string $descriptionPart A part of the description to search for.
+ * @return array An array of transactions that match the search criteria.
+ */
 function findTransactionByDescription(string $descriptionPart) {
-  global $transactions;
-  $matchtrans = [];
-  foreach($transactions as $trtn){
-    if(str_contains(strtolower($trtn['description']),strtolower($descriptionPart))){
-      array_push($matchtrans, $trtn);
-    }
-  }
-  return $matchtrans;
+    global $transactions;
+
+    // Filter the transactions to find matches with the description part.
+    $res = array_filter($transactions, fn($trtn) => str_contains(strtolower($trtn['description']), strtolower($descriptionPart)));
+
+    // Return the filtered list of transactions.
+    return $res;
 }
 
+/**
+ * Finds a transaction by its id.
+ *
+ * @param int $id The id of the transaction to search for.
+ * @return array A list of transactions with the specified id.
+ */
 function findTransactionById(int $id){
-  // $transaction = [];
   global $transactions;
+
+  // Filter the transactions to find matches with the given id.
+  $res = array_filter($transactions, fn($trtn) => $trtn['id']===$id);
+
+  // Return the filtered list of transactions.
+  return $res;
+}
+
+//with foreach
+// function findTransactionById(int $id){ 
+  // $transaction = [];
   // foreach($transactions as $trtn){
   //   if(isset($trtn['id']) && ($trtn['id'] == $id)){
   //     $transaction = $trtn;
   //   }
   // }
-  $res = array_filter($transactions, fn($trtn) => $trtn['id']===$id);
-  return $res;
-}
+// }
 
+/**
+ * Calculates the number of days since the transaction date.
+ *
+ * @param string $date The date of the transaction in the format "m/d/Y".
+ * @return int The number of days since the transaction date.
+ */
 function daysSinceTransaction(string $date): int {
-  $transdate = DateTime::createFromFormat("m/d/Y",$date);
+  // Create a DateTime object from the transaction date.
+  $transdate = DateTime::createFromFormat("m/d/Y", $date);
+
+  // Create a DateTime object for the current date.
   $now = new DateTime();
+
+  // Calculate the difference between the two dates.
   $interval = $now->diff($transdate);
+
+  // Return the number of days in the difference.
   return $interval->days;
 }
 
+/**
+ * Adds a new transaction to the global transactions array.
+ *
+ * @param int $id The id of the new transaction.
+ * @param string $date The date of the new transaction in the format "m/d/Y".
+ * @param float $amount The amount of the new transaction.
+ * @param string $description The description of the new transaction.
+ * @param string $merchant The merchant of the new transaction.
+ * @throws Exception If any of the required parameters are missing.
+ */
 function addTransaction(int $id, string $date, float $amount, string $description, string $merchant): void  {
   global $transactions;
   $temp = [];
-  isset($id) ? $temp['id']=$id : throw new Exception('NO ID');
-  isset($id) ? $temp['date']=$date : throw new Exception('NO DATE');
-  isset($id) ? $temp['amount']=$amount : throw new Exception('NO AMOUNT');
-  isset($id) ? $temp['description']=$description : $temp['description']="" ;
-  isset($id) ? $temp['merchant']=$merchant : throw new Exception('NO MERCHANT');
-  
-  array_push($transactions,$temp);
+
+  // Validate the parameters and throw an exception if any are missing.
+  if (!isset($id)) {
+    throw new Exception('NO ID');
+  }
+  if (!isset($date)) {
+    throw new Exception('NO DATE');
+  }
+  if (!isset($amount)) {
+    throw new Exception('NO AMOUNT');
+  }
+  if (!isset($merchant)) {
+    throw new Exception('NO MERCHANT');
+  }
+
+  // Populate the temporary array with the transaction data.
+  $temp['id'] = $id;
+  $temp['date'] = $date;
+  $temp['amount'] = $amount;
+  $temp['description'] = $description;
+  $temp['merchant'] = $merchant;
+
+  // Add the new transaction to the global transactions array.
+  array_push($transactions, $temp);
 }
 // ===============================================================
 // =====================ADDED NEW TRANSACTION=====================
 addTransaction(3,"2/18/2025",199.9,"","ASUS");
 
 // sorting
+// Sort the transactions array by date in descending order.
+// The comparison function used with usort takes two transactions and compares
+// their dates. The dates are converted to DateTime objects for comparison.
+// The result of the comparison is negated to sort in descending order.
 usort($transactions, function($a,$b){
   $datea = DateTime::createFromFormat("m/d/Y",$a['date']);
   $dateb = DateTime::createFromFormat("m/d/Y",$b['date']);
