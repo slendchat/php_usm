@@ -4,14 +4,14 @@ $dayofweek = date('N');
 
 if(in_array($dayofweek,[1,3,5]))
 {
-  $jhonsched = "8:00 - 12:00";
+  $jhonschedule = "8:00 - 12:00";
 }
 else
 {
-  $jhonsched = "Нерабочий день";
+  $jhonschedule = "Нерабочий день";
 }
 
-$janesched = (in_array($dayofweek, [2, 4, 6])) 
+$janeschedule = (in_array($dayofweek, [2, 4, 6])) 
     ? "12:00 - 16:00" 
     : "Нерабочий день";
 
@@ -41,12 +41,12 @@ $janesched = (in_array($dayofweek, [2, 4, 6]))
     <tr>
         <td>1</td>
         <td>John Styles</td>
-        <td><?php echo $jhonsched; ?></td>
+        <td><?php echo $jhonschedule; ?></td>
     </tr>
     <tr>
         <td>2</td>
         <td>Jane Doe</td>
-        <td><?php echo $janesched; ?></td>
+        <td><?php echo $janeschedule; ?></td>
     </tr>
 </table>
 <br><br><br>

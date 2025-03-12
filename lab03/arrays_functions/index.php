@@ -35,12 +35,8 @@ function calculateTotalAmount(array $transactions): float {
  */
 function findTransactionByDescription(string $descriptionPart) {
     global $transactions;
-
     // Filter the transactions to find matches with the description part.
-    $res = array_filter($transactions, fn($trtn) => str_contains(strtolower($trtn['description']), strtolower($descriptionPart)));
-
-    // Return the filtered list of transactions.
-    return $res;
+    return array_filter($transactions, fn($transaction) => str_contains(strtolower($transaction['description']), strtolower($descriptionPart)));
 }
 
 /**
@@ -53,18 +49,15 @@ function findTransactionById(int $id){
   global $transactions;
 
   // Filter the transactions to find matches with the given id.
-  $res = array_filter($transactions, fn($trtn) => $trtn['id']===$id);
-
-  // Return the filtered list of transactions.
-  return $res;
+  return array_filter($transactions, fn($transaction) => $transaction['id']===$id);
 }
 
 //with foreach
 // function findTransactionById(int $id){ 
   // $transaction = [];
-  // foreach($transactions as $trtn){
-  //   if(isset($trtn['id']) && ($trtn['id'] == $id)){
-  //     $transaction = $trtn;
+  // foreach($transactions as $transaction){
+  //   if(isset($transaction['id']) && ($transaction['id'] == $id)){
+  //     $transaction = $transaction;
   //   }
   // }
 // }
@@ -172,17 +165,16 @@ usort($transactions, function($a,$b){
 <!-- Table data -->
   <tbody>
   <?php
-    foreach ($transactions as $t) {
-      echo "<tr>";
-      echo "<td>{$t['id']}</td>";
-      echo "<td>{$t['date']}</td>";
-      echo "<td>{$t['amount']}</td>";
-      echo "<td>{$t['description']}</td>";
-      echo "<td>{$t['merchant']}</td>";
-      echo "<td>",daysSinceTransaction($t['date']),"</td>";
-      echo "</tr>";
-    }
-  ?>
+  foreach ($transactions as $t): ?>
+    <tr>
+      <td><?= $t['id'] ?></td>
+      <td><?= $t['date'] ?></td>
+      <td><?= $t['amount'] ?></td>
+      <td><?= $t['description'] ?></td>
+      <td><?= $t['merchant'] ?></td>
+      <td><?= daysSinceTransaction($t['date']) ?></td>
+    </tr>
+  <?php endforeach; ?>
   </tbody>
 </table>
 
@@ -199,9 +191,9 @@ echo calculateTotalAmount($transactions);
 <h3>Transaction by id 1:</h3>
 <p>
 <?php
-$trtnList = findTransactionById(1);
-foreach($trtnList as $trtn){
-  foreach($trtn as $key => $value){
+$transactionList = findTransactionById(1);
+foreach($transactionList as $transaction){
+  foreach($transaction as $key => $value){
     echo "$key: $value<br>";
   }
 }
@@ -213,9 +205,9 @@ foreach($trtnList as $trtn){
 <h3>Transaction by description part "dinner":</h3>
 <p>
 <?php
-$trtnList = findTransactionByDescription("dinner");
-foreach($trtnList as $trtn){
-  foreach($trtn as $key => $value){
+$transactionList = findTransactionByDescription("dinner");
+foreach($transactionList as $transaction){
+  foreach($transaction as $key => $value){
     echo "$key: $value<br>";
   }
 }
@@ -240,18 +232,20 @@ foreach($trtnList as $trtn){
 <!-- Table data -->
   <tbody>
   <?php
-    usort($transactions, fn($a, $b) => $b['amount'] <=> $a['amount']);
-    foreach ($transactions as $t) {
-      echo "<tr>";
-      echo "<td>{$t['id']}</td>";
-      echo "<td>{$t['date']}</td>";
-      echo "<td>{$t['amount']}</td>";
-      echo "<td>{$t['description']}</td>";
-      echo "<td>{$t['merchant']}</td>";
-      echo "<td>",daysSinceTransaction($t['date']),"</td>";
-      echo "</tr>";
-    }
-  ?>
+
+  usort($transactions, fn($a, $b) => $b['amount'] <=> $a['amount']);
+
+  foreach ($transactions as $t): ?>
+      <tr>
+          <td><?= $t['id'] ?></td>
+          <td><?= $t['date'] ?></td>
+          <td><?= $t['amount'] ?></td>
+          <td><?= $t['description'] ?></td>
+          <td><?= $t['merchant'] ?></td>
+          <td><?= daysSinceTransaction($t['date']) ?></td>
+      </tr>
+  <?php endforeach; ?>
+
   </tbody>
 </table>
 

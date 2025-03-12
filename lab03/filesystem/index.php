@@ -8,7 +8,7 @@
      * 
      * @return void
      */
-    function place_img(string $dir): void
+    function placeImages(string $dir): void
     {
         $files = scandir($dir);
         if ($files !== false) {
@@ -57,7 +57,7 @@
   <!-- Gallery -->
   <div class="gallery">
       <?php
-        place_img("./image/")
+        placeImages("./image/")
       ?>
   </div>
 
