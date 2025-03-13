@@ -1,26 +1,7 @@
 <?php
 // Путь к файлу, где храним товары.
 // Проверь, что папка storage существует и к ней есть доступ на запись.
-$regions = [
-  "Кишинёв", "Бэлць", "Кагул", "Унгены", "Орхей", "Сорока", "Тирасполь", "Бендеры", "Комрат"
-];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Массив, куда будем собирать информацию о новом товаре
-  $productData = [
-      'id'          => uniqid(),  // Уникальный идентификатор
-      'images'      => [],
-      'name'        => $_POST['name'] ?? '',
-      'description' => $_POST['description'] ?? '',
-      'price'       => $_POST['price'] ?? '',
-      'category'    => $_POST['category'] ?? '',
-      'phone'       => $_POST['phone'] ?? '',
-      'region'      => $_POST['region'] ?? '',
-      'is_bargain'  => isset($_POST['is_bargain']) ? true : false,
-      'created_at'  => date('Y-m-d H:i:s') // Текущая дата/время
-  ];
-
-}
+include '../../src/helpers.php';
 
 ?>
 
@@ -32,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <h1>Добавить товар</h1>
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="../../src/handlers/ProductCreateHandler.php" method="post" enctype="multipart/form-data">
         <label for="images">Фото товара (до 3 файлов):</label><br>
         <input type="file" name="images[]" id="images" multiple required><br><br>
 

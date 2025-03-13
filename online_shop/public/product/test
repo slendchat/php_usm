@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Обработка до 3 загружаемых изображений
     // Не забудь в форме ниже прописать: enctype="multipart/form-data"
+    
     if (!empty($_FILES['images']['name'][0])) {
         $uploadDir = __DIR__ . '/../../storage/uploads'; // Папка для сохранения изображений
         if (!is_dir($uploadDir)) {
