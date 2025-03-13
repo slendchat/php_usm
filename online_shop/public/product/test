@@ -1,0 +1,85 @@
+
+$productsFile = __DIR__ . '/../../storage/products.json';
+
+
+$errors = [];
+
+// Если форма отправлена методом POST, обрабатываем данные
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Массив, куда будем собирать информацию о новом товаре
+    $productData = [
+        'id'          => uniqid(),  // Уникальный идентификатор
+        'images'      => [],
+        'name'        => $_POST['name'] ?? '',
+        'description' => $_POST['description'] ?? '',
+        'price'       => $_POST['price'] ?? '',
+        'category'    => $_POST['category'] ?? '',
+        'phone'       => $_POST['phone'] ?? '',
+        'region'      => $_POST['region'] ?? '',
+        'is_bargain'  => isset($_POST['is_bargain']) ? true : false,
+        'created_at'  => date('Y-m-d H:i:s') // Текущая дата/время
+    ];
+
+    if(!preg_match('/^\+373\d{8}$/',$productData['phone'])) {
+      // die("<p>Ошибка: Некорректный формат номера телефона!</p>");
+      array_push($errors, "Номер телефона должен быть в формате +373xxxxxxxx");
+    }
+
+    if($productData['price'] <= 0) {
+      array_push($errors, "Цена не может быть отрицательной или равна 0");
+    }
+
+    if (!in_array($productData['region'], $regions)) {
+      // die("<p>Ошибка: Некорректный регион!</p>");
+      array_push($errors, "Некорректный регион!");
+    }
+
+    // Обработка до 3 загружаемых изображений
+    // Не забудь в форме ниже прописать: enctype="multipart/form-data"
+    if (!empty($_FILES['images']['name'][0])) {
+        $uploadDir = __DIR__ . '/../../storage/uploads'; // Папка для сохранения изображений
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        // Ограничиваемся максимум 3-мя файлами
+        $filesCount = count($_FILES['images']['name']);
+        $maxFiles = min($filesCount, 3);
+
+        for ($i = 0; $i < $maxFiles; $i++) {
+            // Если файл корректно загружен
+            if ($_FILES['images']['error'][$i] === UPLOAD_ERR_OK) {
+                $tmpName = $_FILES['images']['tmp_name'][$i];
+                // Генерируем уникальное имя для файла
+                $fileName = uniqid() . '_' . basename($_FILES['images']['name'][$i]);
+
+                // Перемещаем файл в папку uploads
+                $destination = $uploadDir . '/' . $fileName;
+                if (move_uploaded_file($tmpName, $destination)) {
+                    // Сохраняем путь к файлу (либо URL) в массив
+                    $productData['images'][] = 'uploads/' . $fileName;
+                }
+            }
+        }
+    }
+
+    // Загружаем существующие товары из products.json (если файл есть)
+    $existingProducts = [];
+    if (file_exists($productsFile)) {
+        $jsonContent = file_get_contents($productsFile);
+        $existingProducts = json_decode($jsonContent, true) ?? [];
+    }
+
+    // Добавляем новый товар в список
+    $existingProducts[] = $productData;
+
+    // Сохраняем всё обратно в products.json
+    if(empty($errors)) {
+      file_put_contents($productsFile, json_encode($existingProducts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+      // Редирект или сообщение об успехе – на твоё усмотрение
+      echo "<p>Товар успешно добавлен!</p>";
+    }
+    else {
+      echo "<p>" . implode("<br>", $errors) . "</p>";
+    }
+}
