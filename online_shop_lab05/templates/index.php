@@ -1,3 +1,21 @@
+/**
+ * This script fetches the latest products from the database and their associated images.
+ * 
+ * - Connects to the database using the `Database` class.
+ * - Retrieves the two most recently created products from the `products` table.
+ * - For each product, fetches its associated image paths from the `product_images` table.
+ * - Adds the image paths to the respective product's data under the `images` key.
+ * 
+ * Variables:
+ * - `$db`: Instance of the `Database` class used for database operations.
+ * - `$stmt`: Prepared statement for fetching the latest products.
+ * - `$latestProducts`: Array containing the latest products with their details.
+ * - `$stmtImg`: Query for fetching image paths associated with a product.
+ * - `$images`: Array of image paths for a specific product.
+ * 
+ * Output:
+ * - The script uses output buffering (`ob_start()`) to capture the output for further processing.
+ */
 <?php
 require_once __DIR__ . '/../src/db.php';
 

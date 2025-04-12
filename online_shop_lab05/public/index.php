@@ -5,12 +5,20 @@ require_once __DIR__ . '/../src/routes.php';
 
 $db = new Database();
 
-// Получаем два последних товара из базы данных
+/**
+ * Fetch the two latest products from the database.
+ *
+ * @var PDOStatement $stmt Prepared statement for fetching the latest products.
+ */
 $stmt = $db->getPdo()->prepare("SELECT * FROM products ORDER BY created_at DESC LIMIT 2");
 $stmt->execute();
 $latestProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Для каждого товара подгружаем изображения (если они есть)
+/**
+ * Load images for each product if available.
+ *
+ * @var array $product Reference to the current product record.
+ */
 foreach ($latestProducts as &$product) {
     $stmtImg = $db->query("SELECT image_path FROM product_images WHERE product_id = :id", [':id' => $product['id']]);
     $images = $stmtImg->fetchAll(PDO::FETCH_COLUMN);

@@ -11,6 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $productsFile = __DIR__ . '/../../storage/products.json';
 
 
+/**
+ * Validates the product data provided by the user.
+ *
+ * @param array $productData An associative array containing product details:
+ *                           - 'phone' (string): The phone number in the format +373xxxxxxxx.
+ *                           - 'price' (float|int): The price of the product.
+ *                           - 'region' (string): The region of the product.
+ * @return array An array of validation error messages. If the array is empty, the data is valid.
+ *
+ * Validation Rules:
+ * - The phone number must match the format +373xxxxxxxx.
+ * - The price must be greater than 0.
+ * - The region must be one of the predefined valid regions (defined in the global $regions array).
+ * - If images are uploaded:
+ *   - A maximum of 3 images will be validated.
+ *   - Each image must not exceed 8 MB in size.
+ *   - Allowed image formats are jpg, jpeg, png, and webp.
+ *   - Each file must be a valid image.
+ *   - Proper error handling is performed for file upload issues.
+ */
 function validateProductData($productData) {
     global $regions;
     $validationErrorMessages = [];
@@ -76,6 +96,31 @@ $productData = [
 
 $errors = validateProductData($productData);
 
+/**
+ * Handles the creation of a new product, including image uploads and database insertion.
+ *
+ * This script processes form data to create a new product. It validates the input,
+ * handles file uploads for product images, and inserts the product and its associated
+ * images into the database. If any errors occur during the process, appropriate error
+ * messages are displayed or logged.
+ *
+ * Process:
+ * - Validates the `$errors` array to ensure no validation errors exist.
+ * - Handles file uploads for up to 3 images:
+ *   - Creates the upload directory if it does not exist.
+ *   - Generates unique filenames for uploaded images.
+ *   - Moves uploaded files to the designated directory.
+ * - Inserts the product data into the database.
+ * - Associates uploaded images with the product in the database.
+ * - Redirects to the homepage upon successful completion.
+ *
+ * Error Handling:
+ * - Logs errors if file uploads fail.
+ * - Displays an error message if an exception is thrown during the process.
+ * - Outputs validation errors if present.
+ *
+ * @throws Exception If an error occurs during database operations or file handling.
+ */
 if (empty($errors)) {
     try {
         $images = [];

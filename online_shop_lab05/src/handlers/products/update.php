@@ -1,3 +1,41 @@
+/**
+ * Handles the update of a product in the database.
+ * 
+ * This script processes a POST request to update a product's details, including
+ * its name, description, price, category, phone, region, and bargain status. It also
+ * manages the upload and replacement of associated product images.
+ * 
+ * Key Features:
+ * - Validates and sanitizes input data.
+ * - Updates product details in the database.
+ * - Deletes old images and uploads new ones (up to 3 images).
+ * - Handles errors during file operations and database queries.
+ * 
+ * Requirements:
+ * - Requires the `db.php` file for database operations.
+ * - Requires the `helpers.php` file for additional helper functions.
+ * 
+ * POST Parameters:
+ * - `id` (string): The ID of the product to update (required).
+ * - `name` (string): The name of the product.
+ * - `description` (string): The description of the product.
+ * - `price` (float): The price of the product.
+ * - `category` (string): The category of the product.
+ * - `phone` (string): The contact phone number.
+ * - `region` (string): The region of the product.
+ * - `is_bargain` (boolean): Whether the product is negotiable (optional).
+ * - `images` (array): An array of uploaded image files (optional, max 3).
+ * 
+ * Error Handling:
+ * - Logs errors for file operations (e.g., file deletion or upload failures).
+ * - Displays error messages for invalid requests or database issues.
+ * 
+ * Redirects:
+ * - On success, redirects to the `/product` page.
+ * 
+ * Example Usage:
+ * - Send a POST request with the required parameters to update a product.
+ */
 <?php
 
 ini_set('display_errors', 1);

@@ -1,3 +1,10 @@
+/**
+ * Class Database
+ *
+ * This class provides methods for interacting with a MySQL database using PDO.
+ * It includes functionality for executing queries, inserting products and their images,
+ * and deleting products along with their associated image files.
+ */
 <?php
 class Database {
     protected $pdo;
@@ -8,23 +15,21 @@ class Database {
 
         try {
             $this->pdo = new PDO($dsn, $config['user'], $config['password']);
-            // Настраиваем PDO на выбрасывание исключений при ошибках
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             die("Connection failed: " . $e->getMessage());
         }
     }
     
-    // Геттер для свойства PDO
     public function getPdo(): PDO {
         return $this->pdo;
     }
 
     /**
-     * Выполняет подготовленный запрос с параметрами.
+     * Executes a prepared query with parameters.
      *
-     * @param string $sql SQL-запрос.
-     * @param array  $params Ассоциативный массив параметров.
+     * @param string $sql SQL query.
+     * @param array  $params Associative array of parameters.
      * @return PDOStatement
      */
     public function query(string $sql, array $params = []): PDOStatement {
@@ -34,9 +39,9 @@ class Database {
     }
 
     /**
-     * Вставляет запись о продукте в таблицу products.
+     * Inserts a record about a product into the products table.
      *
-     * @param array $productData Данные продукта.
+     * @param array $productData Product data.
      * @return bool
      */
     public function insertProduct(array $productData): bool {
@@ -59,10 +64,10 @@ class Database {
     }
 
     /**
-     * Вставляет записи изображений, привязанных к продукту, в таблицу product_images.
+     * Inserts image records associated with a product into the product_images table.
      *
-     * @param string $productId ID продукта.
-     * @param array  $images Массив путей к изображениям.
+     * @param string $productId Product ID.
+     * @param array  $images Array of image paths.
      * @return bool
      */
     public function insertProductImages(string $productId, array $images): bool {
@@ -78,7 +83,7 @@ class Database {
     }
     
     /**
-     * Удаляет товар по ID, включая удаление файлов изображений.
+     * Deletes a product by ID, including the deletion of image files.
      *
      * @param string $productId
      * @return bool

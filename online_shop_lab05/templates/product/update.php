@@ -1,3 +1,30 @@
+/**
+ * This script handles the update functionality for a product in an online shop.
+ * 
+ * It performs the following tasks:
+ * - Includes necessary dependencies for database operations and helper functions.
+ * - Initializes a database connection.
+ * - Checks if a product ID is provided via the `id` query parameter.
+ * - Fetches the product details from the database using the provided product ID.
+ * - If the product is not found, displays an error message and terminates execution.
+ * - Retrieves associated images for the product from the database.
+ * - Stores the product details and associated images for further processing.
+ * 
+ * Dependencies:
+ * - `/../../src/db.php`: Contains the `Database` class for database operations.
+ * - `/../../src/helpers.php`: Contains helper functions.
+ * 
+ * URL Parameters:
+ * - `id` (required): The ID of the product to be updated.
+ * 
+ * Database Queries:
+ * - Fetches product details from the `products` table using the product ID.
+ * - Fetches associated image paths from the `product_images` table using the product ID.
+ * 
+ * Output:
+ * - If the product is not found, an error message is displayed.
+ * - Product details and associated images are prepared for further use.
+ */
 <?php
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/helpers.php';

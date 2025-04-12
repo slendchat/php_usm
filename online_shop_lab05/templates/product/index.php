@@ -1,3 +1,35 @@
+/**
+ * This script handles the display of paginated products for an online shop.
+ * 
+ * Functionality:
+ * - Connects to the database using a `Database` class.
+ * - Retrieves the total number of products from the `products` table.
+ * - Calculates pagination details such as total pages, current page, and offset.
+ * - Fetches a paginated list of products from the database, ordered by creation date.
+ * - For each product, retrieves associated image paths from the `product_images` table.
+ * 
+ * Variables:
+ * - `$db` (Database): An instance of the `Database` class used for database operations.
+ * - `$totalProducts` (int): The total number of products in the database.
+ * - `$perPage` (int): The number of products displayed per page (default is 5).
+ * - `$totalPages` (int): The total number of pages based on the product count and items per page.
+ * - `$page` (int): The current page number, determined from the `GET` parameter `page`.
+ * - `$offset` (int): The offset for the SQL query, calculated based on the current page.
+ * - `$paginatedProducts` (array): An array of products for the current page, including their associated images.
+ * 
+ * SQL Queries:
+ * - Counts the total number of products in the `products` table.
+ * - Retrieves a paginated list of products with a limit and offset.
+ * - Fetches image paths for each product from the `product_images` table.
+ * 
+ * Notes:
+ * - The script uses prepared statements to prevent SQL injection.
+ * - Pagination ensures that the `page` parameter is within valid bounds.
+ * - The `images` key is added to each product to include its associated image paths.
+ * 
+ * Output:
+ * - The script uses output buffering (`ob_start()`) to capture the rendered content.
+ */
 <?php
 require_once __DIR__ . '/../../src/db.php';
 
