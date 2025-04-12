@@ -1,6 +1,6 @@
 <?php
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = rtrim($uri, '/'); // Убираем завершающий слэш
+$uri = rtrim($uri, '/');
 if ($uri === '') {
     $uri = '/';
 }

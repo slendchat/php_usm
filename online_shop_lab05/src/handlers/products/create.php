@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../db.php';
 include __DIR__ . '/../../helpers.php';
 ob_start();
-// Проверяем, что запрос POST, иначе перенаправляем на форму создания
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: /product/create");
     exit;
@@ -11,13 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $productsFile = __DIR__ . '/../../storage/products.json';
 
-/**
- * Валидация данных товара.
- *
- * @param array $productData - данные товара.
- *
- * @return array - список сообщений об ошибках.
- */
+
 function validateProductData($productData) {
     global $regions;
     $validationErrorMessages = [];
@@ -37,7 +30,7 @@ function validateProductData($productData) {
     if (!empty($_FILES['images']['name'][0])) {
         $filesCount = count($_FILES['images']['name']);
         $maxFiles = min($filesCount, 3);
-        $maxFileSize = 10 * 1024 * 1024; // 10 МБ
+        $maxFileSize = 8 * 1024 * 1024; 
         $allowedFormats = ["jpg", "jpeg", "png", "webp"];
 
         for ($i = 0; $i < $maxFiles; $i++) {
@@ -85,10 +78,9 @@ $errors = validateProductData($productData);
 
 if (empty($errors)) {
     try {
-        // Обработка загрузки файлов изображений (как было)
         $images = [];
         if (!empty($_FILES['images']['name'][0])) {
-            $uploadDir = __DIR__ . '/../../storage/uploads';
+            $uploadDir = __DIR__ . '/../../../storage/uploads';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
@@ -102,17 +94,17 @@ if (empty($errors)) {
 
                     $destination = $uploadDir . '/' . $uniqueFileName;
                     if (move_uploaded_file($tmpName, $destination)) {
-                        // Сохраняем относительный путь, который потом будет вставлен в таблицу product_images
                         $images[] = 'uploads/' . $uniqueFileName;
+                    } else {
+                        error_log("Не удалось переместить файл из $tmpName в $destination");
+                        die("Ошибка перемещения файла. Проверь права доступа и путь.");
                     }
                 }
             }
         }
-        // Создадим экземпляр Database
+
         $db = new Database();
-        // Вставляем запись о продукте
         $db->insertProduct($productData);
-        // Если изображения загружены, вставляем их в БД
         if (!empty($images)) {
             $db->insertProductImages($productData['id'], $images);
         }

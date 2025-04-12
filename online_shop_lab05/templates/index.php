@@ -4,12 +4,10 @@ require_once __DIR__ . '/../src/db.php';
 
 $db = new Database();
 
-// Получаем два последних товара
 $stmt = $db->getPdo()->prepare("SELECT * FROM products ORDER BY created_at DESC LIMIT 2");
 $stmt->execute();
 $latestProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Получаем изображения для каждого товара
 foreach ($latestProducts as &$product) {
     $stmtImg = $db->query("SELECT image_path FROM product_images WHERE product_id = :id", [':id' => $product['id']]);
     $images = $stmtImg->fetchAll(PDO::FETCH_COLUMN);

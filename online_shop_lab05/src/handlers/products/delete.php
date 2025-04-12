@@ -1,7 +1,5 @@
 <?php
-// src/handlers/products/delete.php
 
-// Проверяем, что параметр id передан
 if (!isset($_GET['id'])) {
     header("Location: /product");
     exit;

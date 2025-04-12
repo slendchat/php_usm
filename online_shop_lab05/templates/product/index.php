@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../src/db.php';
 
 $db = new Database();
 
-// Получаем общее количество товаров
 $stmt = $db->query("SELECT COUNT(*) FROM products");
 $totalProducts = (int)$stmt->fetchColumn();
 
@@ -14,14 +13,12 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']
 $page = max(1, min($page, $totalPages));
 $offset = ($page - 1) * $perPage;
 
-// Используем getPdo() для подготовки запроса с параметрами LIMIT и OFFSET
 $stmt = $db->getPdo()->prepare("SELECT * FROM products ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
 $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $paginatedProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Получаем изображения для каждого товара
 foreach ($paginatedProducts as &$product) {
     $stmtImg = $db->query("SELECT image_path FROM product_images WHERE product_id = :id", [':id' => $product['id']]);
     $images = $stmtImg->fetchAll(PDO::FETCH_COLUMN);
@@ -31,12 +28,10 @@ unset($product);
 
 ob_start();
 ?>
-<!-- Здесь вывод списка товаров с кнопками "Редактировать" и "Удалить" (как в предыдущем примере) -->
 <h1>Все товары — Страница <?= $page ?></h1>
 
 <?php foreach ($paginatedProducts as $product): ?>
     <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-        <!-- Вывод информации о товаре -->
         <strong><?= htmlspecialchars($product['name']) ?></strong><br>
         Цена: <?= htmlspecialchars($product['price']) ?> MDL<br>
         Категория: <?= htmlspecialchars($product['category']) ?><br>
@@ -63,7 +58,6 @@ ob_start();
     </div>
 <?php endforeach; ?>
 
-<!-- Навигация -->
 <div style="margin-top:20px;">
     <?php if ($page > 1): ?>
         <a href="?page=<?= $page - 1 ?>">« Назад</a>

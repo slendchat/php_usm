@@ -1,24 +1,25 @@
 <?php
 require_once __DIR__ . '/../src/helpers.php';
+require_once __DIR__ . '/../src/db.php';
 require_once __DIR__ . '/../src/routes.php';
 
-$productsFile = __DIR__ . '/../storage/products.json';
+$db = new Database();
 
-// loading products
-$products = [];
-if (file_exists($productsFile)) {
-    $jsonContent = file_get_contents($productsFile);
-    $products = json_decode($jsonContent, true) ?? [];
+// Получаем два последних товара из базы данных
+$stmt = $db->getPdo()->prepare("SELECT * FROM products ORDER BY created_at DESC LIMIT 2");
+$stmt->execute();
+$latestProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Для каждого товара подгружаем изображения (если они есть)
+foreach ($latestProducts as &$product) {
+    $stmtImg = $db->query("SELECT image_path FROM product_images WHERE product_id = :id", [':id' => $product['id']]);
+    $images = $stmtImg->fetchAll(PDO::FETCH_COLUMN);
+    $product['images'] = $images;
 }
-
-usort($products, function ($a, $b) {
-    return strtotime($b['created_at']) <=> strtotime($a['created_at']);
-});
-
-$latestProducts = array_slice($products, 0, 2);
+unset($product);
 ?>
 
-<h1>Последние товары</h1>
+<!-- <h1>Последние товары</h1>
 <?php foreach ($latestProducts as $product): ?>
     <div style="border:1px solid #ccc; padding:10px; margin:10px;">
         <strong><?= htmlspecialchars($product['name']) ?></strong><br>
@@ -34,6 +35,4 @@ $latestProducts = array_slice($products, 0, 2);
             <em>Нет изображений</em>
         <?php endif; ?>
     </div>
-<?php endforeach; ?>
-
-
+<?php endforeach; ?> -->
